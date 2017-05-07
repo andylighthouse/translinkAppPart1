@@ -17,61 +17,32 @@ public class ArrivalsParser {
     private static boolean missingSchedule;
 
     /**
-     * Parse arrivals from JSON response produced by TransLink query.  All parsed arrivals are
-     * added to the given stop assuming that corresponding JSON object has a RouteNo: and an
-     * array of Schedules:
-     * Each schedule must have an ExpectedCountdown, ScheduleStatus, and Destination.  If
-     * any of the aforementioned elements is missing, the arrival is not added to the stop.
-     *
-     * @param stop         stop to which parsed arrivals are to be added
-     * @param jsonResponse the JSON response produced by Translink
-     * @throws JSONException                when:
-     *                                      <ul>
-     *                                      <li>JSON response does not have expected format (JSON syntax problem)</li>
-     *                                      <li>JSON response is not an array</li>
-     *                                      </ul>
-     * @throws ArrivalsDataMissingException when no arrivals are found in the reply
+     * From the file arrivals.json
+     * Throw JSONException JSON response does not have expected format
+     * throws ArrivalsDataMissingException when any required data is missing
      */
     public static void parseArrivals(Stop stop, String jsonResponse) throws JSONException, ArrivalsDataMissingException {
-        // TODO: Task 4: Implement this method
-//        System.out.println(stop);
-//        System.out.println("break");
-//        System.out.println(jsonResponse);
         missingSchedule = false;
 
         JSONArray routes = new JSONArray(jsonResponse);
-        System.out.println(routes);
-        //System.out.println(arrivals);
-        //JSONObject arrival = arrivals.getJSONObject(0);
-        //System.out.println(arrival);
-        //System.out.println(arrival.length());
-        //System.out.println(arrivals.length());
-        //parseArrival(stop, arrival);
+        //System.out.println(routes);
 
         for (int index = 0; index < routes.length(); index++) {
             JSONObject currentRoute = routes.getJSONObject(index);
-            //parseArrival(stop, currentArrival);
-            //System.out.println(currentArrival);
-            //System.out.println(currentSchedules);
             parseSchedule(stop, currentRoute);
-//            } catch (ArrivalsDataMissingException e) {
-//                e.getMessage();
-//            } catch (JSONException e){
-//                e.getStackTrace();  //unnecessary to catch runtime exception???
-//            }
         }
-
-        if (missingSchedule){
+        // check the flag
+        if (missingSchedule) {
             throw new ArrivalsDataMissingException();
         }
     }
 
+    /**
+     * Each Json object must have a RouteNo and Schedules
+     * if any required data is missing, the arrival is not added to the stop and set missingSchedule flag to true
+     */
     private static void parseSchedule(Stop stop, JSONObject currentRoute) throws JSONException, ArrivalsDataMissingException {
-        //System.out.println(arrival);
-        //System.out.println(stop);
-        //System.out.println(schedules);
         if (currentRoute.has("RouteNo") && currentRoute.has("Schedules")) {
-
             String routeNumber = currentRoute.getString("RouteNo");
             JSONArray schedules = currentRoute.getJSONArray("Schedules");
 
@@ -82,10 +53,11 @@ public class ArrivalsParser {
         }
     }
 
+    /**
+     * Each schedule must have an ExpectedCountdown, ScheduleStatus, and Destination.
+     * if any required data is missing, the arrival is not added to the stop and set missingSchedule flag to true
+     */
     private static void parseSchedule(JSONArray schedules, Route route, Stop stop) throws JSONException, ArrivalsDataMissingException {
-        //System.out.println(schedules);
-        //JSONObject schedule = schedules.getJSONObject(0);
-        //System.out.println(schedule);
 
         int count = 0;
         for (int i = 0; i < schedules.length(); i++) {
@@ -102,11 +74,9 @@ public class ArrivalsParser {
                 count++;
             }
         }
-
+        //make sure it is not empty
         if (count == 0) {
             missingSchedule = true;
         }
-
     }
-
 }

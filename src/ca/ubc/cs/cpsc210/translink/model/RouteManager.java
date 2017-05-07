@@ -3,18 +3,12 @@ package ca.ubc.cs.cpsc210.translink.model;
 import java.util.*;
 
 /**
- * Manages all routes.
- * <p>
- * Singleton pattern applied to ensure only a single instance of this class that
- * is globally accessible throughout application.
+ * Manages all routes. Singleton
  */
-
-// TODO: Task 2: Complete all the methods of this class
 
 public class RouteManager implements Iterable<Route> {
     private static RouteManager instance;
-    // Use this field to hold all of the routes.
-    // Do not change this field or its type, as the iterator method depends on it
+
     private Map<String, Route> routeMap;
 
     /**
@@ -26,11 +20,8 @@ public class RouteManager implements Iterable<Route> {
 
     /**
      * Gets one and only instance of this class
-     *
-     * @return instance of class
      */
     public static RouteManager getInstance() {
-        // Do not modify the implementation of this method!
         if (instance == null) {
             instance = new RouteManager();
         }
@@ -38,29 +29,19 @@ public class RouteManager implements Iterable<Route> {
     }
 
     /**
-     * Get route with given number, creating it and adding it to the collection of all routes if necessary.
-     * If it is necessary to create the route, give it an empty string "" as its name
-     *
-     * @param number the number of this route
-     * @return route with given number
+     * Get route with given number or create and add it to the collection of all routes
      */
     public Route getRouteWithNumber(String number) {
-
         if (routeMap.containsKey(number)) {
             return routeMap.get(number);
         }
-
         Route newRoute = new Route(number);
         routeMap.put(number, newRoute);
         return newRoute;
     }
 
     /**
-     * Get route with given number, creating it and adding it to the collection of all routes if necessary,
-     * using the given name and number
-     *
-     * @param number the number of this route
-     * @return route with given number and name
+     * Overloading for getRouteWithNumber with name param
      */
     public Route getRouteWithNumber(String number, String name) {
         if (routeMap.containsKey(number)) {
@@ -75,8 +56,6 @@ public class RouteManager implements Iterable<Route> {
 
     /**
      * Get number of routes managed
-     *
-     * @return number of routes added to manager
      */
     public int getNumRoutes() {
         return routeMap.size();
@@ -84,7 +63,6 @@ public class RouteManager implements Iterable<Route> {
 
     @Override
     public Iterator<Route> iterator() {
-        // Do not modify the implementation of this method!
         return routeMap.values().iterator();
     }
 

@@ -11,7 +11,6 @@ import java.util.List;
  * Each pattern has a name, destination, direction, list of points (of class LatLon), and Route
  */
 
-// TODO: Task 2: Complete all the methods in this class
 
 public class RoutePattern {
     private Route route;
@@ -23,11 +22,6 @@ public class RoutePattern {
 
     /**
      * Construct a new RoutePattern with the given information
-     *
-     * @param name        the name of the pattern
-     * @param destination the destination
-     * @param direction   the direction
-     * @param route       the Route of which this is a pattern
      */
     public RoutePattern(String name, String destination, String direction, Route route) {
         this.name = name;
@@ -36,57 +30,26 @@ public class RoutePattern {
         this.route = route;
         listOfLatLons = new ArrayList<>();
         route.addPattern(this);
-        //I did not add this
     }
 
-    /**
-     * Get the pattern name
-     *
-     * @return the name
-     */
+
     public String getName() {
         return name;
     }
 
-    /**
-     * Get the pattern destination
-     *
-     * @return the destination
-     */
+
     public String getDestination() {
         return destination;
     }
 
-    /**
-     * Get the pattern direction
-     *
-     * @return the direction
-     */
+
     public String getDirection() {
         return direction;
     }
 
     /**
-     * Decide if two RoutePatterns are equal. Two route patterns are equal if their names are equal.
-     *
-     * @param o the other route pattern to compare to
-     * @return true if this is equal to o
+     * Two route patterns are equal if their names are equal.
      */
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof RoutePattern)) return false;
-//
-//        RoutePattern that = (RoutePattern) o;
-//
-//        return getName().equals(that.getName());
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return getName().hashCode();
-//    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,43 +65,9 @@ public class RoutePattern {
         return name != null ? name.hashCode() : 0;
     }
 
-//    @Override
-//    public boolean equals(Object o) {
-//        if (this == o) return true;
-//        if (!(o instanceof RoutePattern)) return false;
-//
-//        RoutePattern that = (RoutePattern) o;
-//
-//        return getName().equals(that.getName());
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//        return getName().hashCode();
-//    }
-//    @Override
-//    public boolean equals(Object o) {
-//        if(this == o) return true;
-//        if((o == null) || getClass() != o.getClass()) return false;
-//
-//        RoutePattern routePattern = (RoutePattern) o;
-//
-//        if(name.equals(routePattern.name)) return true;
-//
-//        return true;
-//
-//    }
-//
-//    @Override
-//    public int hashCode() {
-//
-//        return name.hashCode();
-//    }
 
     /**
-     * Set the pattern path: list of coordinates
-     *
-     * @param path the path
+     * Set the pattern path, which is a list of coordinates
      */
     public void setPath(List<LatLon> path) {
         listOfLatLons = path;
@@ -146,27 +75,17 @@ public class RoutePattern {
 
     /**
      * Return the list of coordinates making up this pattern
-     *
-     * @return an unmodifiable list of the coordinates on this route pattern
      */
     public List<LatLon> getPath() {
         return Collections.unmodifiableList(listOfLatLons);
     }
 
-    /**
-     * Set the direction
-     *
-     * @param direction the direction
-     */
+
     public void setDirection(String direction) {
         this.direction = direction;
     }
 
-    /**
-     * Set the destination
-     *
-     * @param destination the destination
-     */
+
     public void setDestination(String destination) {
         this.destination = destination;
     }

@@ -15,23 +15,10 @@ public class Geometry {
      * @return true if the point is on the boundary or inside the rectangle
      */
     public static boolean rectangleContainsPoint(LatLon northWest, LatLon southEast, LatLon point) {
-        //LOOK AT IT AS A MAP
-        // TODO: Task 5: Implement this method
+
         double x = point.getLatitude();
         double y = point.getLongitude();
-//        System.out.println(northWest.getLatitude());
-//        System.out.println(northWest.getLongitude());
-//        System.out.println(southEast.getLatitude());
-//        System.out.println(southEast.getLongitude());
-//        System.out.println(point.getLatitude());
-//        System.out.println(point.getLongitude());
 
-//        if ((northWest.getLatitude() >= x) &&  (x >= southEast.getLatitude()) &&
-//                (northWest.getLongitude() <= y) && (y <= southEast.getLongitude())){
-//            return true;
-//         }else{
-//            return false;
-//        }
         return (between(northWest.getLatitude(), southEast.getLatitude(), x) &&
                 between(southEast.getLongitude(), northWest.getLongitude(), y));
     }
@@ -46,18 +33,9 @@ public class Geometry {
      * @return true if any point on the line is on the boundary or inside the rectangle
      */
     public static boolean rectangleIntersectsLine(LatLon northWest, LatLon southEast, LatLon src, LatLon dst) {
-        // TODO: Tasks 5: Implement this method
-        //LOOK AT IT AS A MAP, not screen coordinate
+
         //stackoverflow http://stackoverflow.com/questions/15514906/how-to-check-intersection-between-a-line-and-a-rectangle
 
-        //System.out.println("north lat " + northWest.getLatitude());
-        //System.out.println("north long " + northWest.getLongitude());
-        //System.out.println("south lat " + southEast.getLatitude());
-        //System.out.println("south long " + southEast.getLongitude());
-//        System.out.println(src.getLatitude());
-//        System.out.println(src.getLongitude());
-//        System.out.println(dst.getLatitude());
-//        System.out.println(dst.getLongitude());
 
         Line2D left = new Line2D.Double(northWest.getLongitude(), northWest.getLatitude(), northWest.getLongitude(), southEast.getLatitude());
         Line2D right = new Line2D.Double(southEast.getLongitude(), northWest.getLatitude(), southEast.getLongitude(), southEast.getLatitude());
@@ -68,14 +46,12 @@ public class Geometry {
         Line2D line = new Line2D.Double(src.getLongitude(), src.getLatitude(), dst.getLongitude(), dst.getLatitude()); //the test line
 
 
-        return ((left.intersectsLine(line) || top.intersectsLine(line) || right.intersectsLine(line) || bottom.intersectsLine(line)) ||  checkmiddle(northWest, southEast, src, dst));
-        //InterectLine method does not check if line is complete inside!!!!!!!
-        //OMG
-
+        return ((left.intersectsLine(line) || top.intersectsLine(line) || right.intersectsLine(line) || bottom.intersectsLine(line)) ||  checkMiddle(northWest, southEast, src, dst));
+        //InterectLine method does not check if line is complete inside, need to use checkMiddle method too
 
     }
 
-    private static boolean checkmiddle(LatLon northWest, LatLon southEast, LatLon src, LatLon dst) {
+    private static boolean checkMiddle(LatLon northWest, LatLon southEast, LatLon src, LatLon dst) {
         return ((rectangleContainsPoint(northWest, southEast, src)) && (rectangleContainsPoint(northWest, southEast, dst)));
     }
 

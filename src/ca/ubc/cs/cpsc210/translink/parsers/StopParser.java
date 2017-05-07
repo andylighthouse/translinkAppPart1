@@ -27,7 +27,7 @@ public class StopParser {
     }
 
     /**
-     * Parse stop data from the file and add all stops to stop manager.
+     * Parse stop data from the stops.json file and add all stops to stop manager.
      */
     public void parse() throws IOException, StopDataMissingException, JSONException {
         DataProvider dataProvider = new FileDataProvider(filename);
@@ -37,19 +37,10 @@ public class StopParser {
     /**
      * Parse stop information from JSON response produced by Translink.
      * Stores all stops and routes found in the StopManager and RouteManager.
-     *
-     * @param jsonResponse string encoding JSON data to be parsed
-     * @throws JSONException            when:
-     *                                  <ul>
-     *                                  <li>JSON data does not have expected format (JSON syntax problem)</li>
-     *                                  <li>JSON data is not an array</li>
-     *                                  </ul>
-     *                                  If a JSONException is thrown, no stops should be added to the stop manager
-     * @throws StopDataMissingException when
-     *                                  <ul>
-     *                                  <li> JSON data is missing Name, StopNo, Routes or location (Latitude or Longitude) elements for any stop</li>
-     *                                  </ul>
-     *                                  If a StopDataMissingException is thrown, all correct stops are first added to the stop manager.
+     * throw JSONException when data does not have expected format
+     *If a JSONException is thrown, no stops should be added to the stop manager
+     * throw StopDataMissingException when data is missing Name, StopNo, Routes or location (Latitude or Longitude) elements for any stop
+     * If a StopDataMissingException is thrown, all correct stops are first added to the stop manager.
      */
 
     public void parseStops(String jsonResponse)
@@ -57,13 +48,10 @@ public class StopParser {
 
         missingData = false;
 
-
         JSONArray stops = new JSONArray(jsonResponse);
-        //System.out.println(stops.getJSONObject(1));
 
         for (int index = 0; index < stops.length(); index++) {
             JSONObject stop = stops.getJSONObject(index);
-            //System.out.println(stop);
             parseStop(stop);
         }
 
@@ -78,23 +66,21 @@ public class StopParser {
             Double latitude = stop.getDouble("Latitude");
             Double longitude = stop.getDouble("Longitude");
             String routes = stop.getString("Routes");
-            //System.out.println(routes);
 
             Stop currentStop = StopManager.getInstance().getStopWithNumber(stopNumber, stopName, new LatLon(latitude, longitude));
 
             addRoutes(currentStop, routes);
 
-
         } else {
+            // if the Name, StopNo, Routes or location is missing
             missingData = true;
-            //throw new StopDataMissingException("Missing stop data");
         }
 
     }
 
 
     private void addRoutes(Stop currentStop, String routes) throws JSONException {
-        //System.out.println(routes);
+
         String[] route = routes.split(", ");
         for (int i = 0; i < route.length; i++) {
             Route currentRoute = RouteManager.getInstance().getRouteWithNumber(route[i]);

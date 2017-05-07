@@ -24,76 +24,46 @@ public class RouteParser {
     }
 
     /**
-     * Parse route data from the file and add all route to the route manager.
+     * Parse route data from the allroutes.json file and add all route to the route manager.
+     * * throw JSONException when data does not have expected format
+     * If a JSONException is thrown, no stops should be added to the stop manager
+     * throw RouteDataMissingException when required data is missing
+     * If a RouteDataMissingException is thrown, all correct routes are first added to the route manager.
      */
     public void parse() throws IOException, RouteDataMissingException, JSONException {
         missingData = false;
         DataProvider dataProvider = new FileDataProvider(filename);
 
-        //try {
         parseRoutes(dataProvider.dataSourceToString());
-        //} catch (RouteDataMissingException e) {
-        //  e.getMessage();
-//        } catch (JSONException e) {
-//            e.getStackTrace();
-        if(missingData){
+
+        if (missingData) {
             throw new RouteDataMissingException();
         }
 
     }
 
-    /**
-     * Parse route information from JSON response produced by Translink.
-     * Stores all routes and route patterns found in the RouteManager.
-     *
-     * @param jsonResponse string encoding JSON data to be parsed
-     * @throws JSONException             when:
-     *                                   <ul>
-     *                                   <li>JSON data does not have expected format (JSON syntax problem)
-     *                                   <li>JSON data is not an array
-     *                                   </ul>
-     *                                   If a JSONException is thrown, no stops should be added to the stop manager
-     * @throws RouteDataMissingException when
-     *                                   <ul>
-     *                                   <li>JSON data is missing RouteNo, Name, or Patterns element for any route</li>
-     *                                   <li>The value of the Patterns element is not an array for any route</li>
-     *                                   <li>JSON data is missing PatternNo, Destination, or Direction element for any route pattern</li>
-     *                                   </ul>
-     *                                   If a RouteDataMissingException is thrown, all correct routes are first added to the route manager.
-     */
 
     public void parseRoutes(String jsonResponse) throws RouteDataMissingException, JSONException {
-        // TODO: Task 4: Implement this method
-//        String ce = jsonResponse;
-//        System.out.println(ce);
-//        System.out.println("read");
-        //try{
+
         JSONArray data = new JSONArray(jsonResponse);
 
         for (int index = 0; index < data.length(); index++) {
             JSONObject route = data.getJSONObject(index);
-            //System.out.println(route);
-            //break;
             parseCurrentRoute(route);
         }
-        //}catch(JSONException e){
-        //      throw new RouteDataMissingException();
-        //}
-
     }
 
-
+    /**
+     * set missingData flag to true if missing RouteNo, Name, or Patterns element for any route
+     */
     public void parseCurrentRoute(JSONObject route) throws RouteDataMissingException, JSONException {
         if (route.has("Name") && route.has("RouteNo") && route.has("Patterns")) {
+
             String name = route.getString("Name");
-            //System.out.println(name);
             String number = route.getString("RouteNo");
-            //System.out.println(number);
             JSONArray patterns = route.getJSONArray("Patterns");
 
             Route currentRoute = RouteManager.getInstance().getRouteWithNumber(number, name);
-            //System.out.println(currentRoute);
-            //currentRoute.setName(name);
             loopPattern(patterns, currentRoute);
         } else {
             missingData = true;
@@ -105,22 +75,21 @@ public class RouteParser {
 
     private void loopPattern(JSONArray patterns, Route currentRoute) throws JSONException, RouteDataMissingException {
         for (int index = 0; index < patterns.length(); index++) {
-            //System.out.println(patterns.getJSONObject(i));
-            //System.out.println("endloop");
             JSONObject currentPattern = patterns.getJSONObject(index);
             parseCurrentPattern(currentPattern, currentRoute);
         }
     }
 
+    /**
+     * set missingData flag to true if missing PatternNo, Destination, or Direction element for any route pattern
+     */
     private void parseCurrentPattern(JSONObject currentPattern, Route currentRoute) throws RouteDataMissingException, JSONException {
         if (currentPattern.has("Destination") && currentPattern.has("Direction") && currentPattern.has("PatternNo")) {
 
             String destination = currentPattern.getString("Destination");
             String direction = currentPattern.getString("Direction");
             String patternNo = currentPattern.getString("PatternNo");
-            //RoutePattern pattern = new RoutePattern(patternNo, destination, direction, currentRoute);
             RoutePattern pattern = currentRoute.getPattern(patternNo, destination, direction);
-            //currentRoute.addPattern(pattern);
         } else {
             missingData = true;
         }
